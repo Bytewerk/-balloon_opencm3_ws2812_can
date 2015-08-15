@@ -11,7 +11,9 @@
 #include <stdint.h>
 
 void ws2812_init(uint32_t spi);
+void ws2812_write_byte(uint32_t spi, uint8_t b);
 void ws2812_write_rgb(uint32_t spi, uint8_t r, uint8_t g, uint8_t b);
 void ws2812_write_hsv(uint32_t spi, float h, float s, float v);
+uint32_t hsv_to_rgb(float h, float s, float v);
 
 #endif /* WS2812_SPI_H_ */

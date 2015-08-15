@@ -28,7 +28,7 @@ static uint32_t ws2812_encode_byte(uint8_t b) {
 	return result;
 }
 
-static void ws2812_write_byte(uint32_t spi, uint8_t b) {
+void ws2812_write_byte(uint32_t spi, uint8_t b) {
 	uint32_t data = ws2812_encode_byte(b);
 	spi_send(spi, (data>>16) & 0xFF);
 	spi_send(spi, (data>> 8) & 0xFF);
@@ -43,8 +43,8 @@ void ws2812_write_rgb(uint32_t spi, uint8_t r, uint8_t g, uint8_t b) {
 	spi_send(spi, 0);
 }
 
-void ws2812_write_hsv(uint32_t spi, float h, float s, float v) {
 
+uint32_t hsv_to_rgb(float h, float s, float v) {
 	float r,g,b;
 
 #pragma GCC diagnostic push
@@ -85,5 +85,13 @@ void ws2812_write_hsv(uint32_t spi, float h, float s, float v) {
 		}
 	}
 
-	ws2812_write_rgb(spi, r*255, g*255, b*255);
+	uint8_t ri = r*255;
+	uint8_t gi = g*255;
+	uint8_t bi = b*255;
+	return (ri<<16) | (gi<<8) | bi;
+}
+
+void ws2812_write_hsv(uint32_t spi, float h, float s, float v) {
+	uint32_t rgb = hsv_to_rgb(h, s, v);
+	ws2812_write_rgb(spi, (rgb>>16) & 0xFF, (rgb>>8) & 0xFF, (rgb>>0) & 0xFF);
 }
